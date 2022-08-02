@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { validateEmail } from '../../utils/helpers';
 
 function ContactForm() {
 	const [formState, setFormState] = useState({
@@ -6,16 +7,64 @@ function ContactForm() {
 		email: '',
 		message: '',
 	});
-	const { name, email, message } = formState;
-	function handleChange(e) {
-		setFormState({ ...formState, [e.target.name]: e.target.value });
-	}
 
-	// console.log(formState);
-	function handleSubmit(e) {
+	const [errorMessage, setErrorMessage] = useState('');
+	const { name, email, message } = formState;
+
+	const handleSubmit = (e) => {
 		e.preventDefault();
-		console.log(formState);
-	}
+		if (!errorMessage) {
+			setFormState({ [e.target.name]: e.target.value });
+			console.log('Form', formState);
+		}
+	};
+
+	const handleChange = (e) => {
+		if (e.target.name === 'email') {
+			const isValid = validateEmail(e.target.value);
+			if (!isValid) {
+				setErrorMessage('Your email is invalid.');
+			} else {
+				setErrorMessage('');
+			}
+		} else {
+			if (!e.target.value.length) {
+				setErrorMessage(`${e.target.name} is required.`);
+			} else {
+				setErrorMessage('');
+			}
+		}
+	};
+
+	// function ContactForm() {
+	// 	const [formState, setFormState] = useState({
+	// 		name: '',
+	// 		email: '',
+	// 		message: '',
+	// 	});
+	// 	const [errorMessage, setErrorMessage] = useState('');
+	// 	const { name, email, message } = formState;
+	// 	function handleChange(e) {
+	// 		if (e.target.name === 'email') {
+	// 			const isValid = validateEmail(e.target.value);
+	// 			console.log(isValid);
+	// 			// isValid conditional statement
+	// 			if (!isValid) {
+	// 				setErrorMessage('Your email is invalid.');
+	// 			} else {
+	// 				setErrorMessage('');
+	// 			}
+	// 		}
+	// 		if (!errorMessage) {
+	// 			setFormState({ ...formState, [e.target.name]: e.target.value });
+	// 		}
+	// 	}
+
+	// 	// console.log(formState);
+	// 	function handleSubmit(e) {
+	// 		e.preventDefault();
+	// 		console.log(formState);
+	// 	}
 	// JSX
 	return (
 		<section>
@@ -26,7 +75,7 @@ function ContactForm() {
 					<input
 						type="text"
 						defaultValue={name}
-						onChange={handleChange}
+						onBlur={handleChange}
 						name="name"
 					/>
 					{/* <input type="text" defaultValue={name} name="name" /> */}
@@ -38,7 +87,7 @@ function ContactForm() {
 						type="email"
 						defaultValue={email}
 						name="email"
-						onChange={handleChange}
+						onBlur={handleChange}
 					/>
 					{/* <input type="email" defaultValue={email} name="email" /> */}
 					{/* <input type="email" name="email" defaultValue={formState.name} /> */}
@@ -49,11 +98,18 @@ function ContactForm() {
 					<textarea
 						name="message"
 						defaultValue={message}
-						onChange={handleChange}
+						onBlur={handleChange}
 						rows="5"
 					/>
 					{/* <textarea name="message" defaultValue={message} rows="5" /> */}
 					{/* <textarea name="message" rows="5" /> */}
+
+					{/* will only be rendered if an error accurs*/}
+					{errorMessage && (
+						<div>
+							<p className="error-text">{errorMessage}</p>
+						</div>
+					)}
 				</div>
 				<button type="submit">Submit</button>
 			</form>
