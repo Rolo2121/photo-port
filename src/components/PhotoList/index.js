@@ -125,13 +125,15 @@ const PhotoList = ({ category }) => {
 	const toggleModal = (image, i) => {
 		// current photo
 		setCurrentPhoto({ ...image, index: i });
-		setIsModalOpen(true);
+		setIsModalOpen(!isModalOpen);
 	};
 
 	return (
 		<div>
 			{/* The following statement will only render the Modal if the value isModalOpen is true, */}
-			{isModalOpen && <Modal currentPhoto={currentPhoto} />}
+			{isModalOpen && (
+				<Modal currentPhoto={currentPhoto} onClose={toggleModal} />
+			)}
 			<div className="flex-row">
 				{currentPhotos.map((image, i) => (
 					<img
